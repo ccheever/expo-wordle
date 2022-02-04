@@ -16,7 +16,7 @@ export default function App() {
     ClearSansBoldItalic: require("./assets/fonts/clear-sans/ClearSans-BoldItalic.ttf"),
   });
 
-  return (
+  return fontsLoaded ? (
     <View style={styles.container}>
       <Text
         style={{
@@ -46,7 +46,7 @@ export default function App() {
 
       <StatusBar style="auto" />
     </View>
-  );
+  ) : <View/>;
 }
 
 const styles = StyleSheet.create({
