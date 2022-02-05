@@ -1,7 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { colors } from "./styles";
+import { Keyboard } from "./components/keyboard";
 import { useFonts } from "expo-font";
 
 export default function App() {
@@ -17,35 +19,38 @@ export default function App() {
   });
 
   return fontsLoaded ? (
-    <View style={styles.container}>
-      <Text
-        style={{
-          fontFamily: "ClearSansRegular",
-          fontSize: 16,
-        }}
-      >
-        Clear Sans Regular
-      </Text>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <Text
+          style={{
+            fontFamily: "ClearSansRegular",
+            fontSize: 16,
+          }}
+        >
+          Clear Sans Regular
+        </Text>
 
-      <Text
-        style={{
-          fontFamily: "ClearSansMedium",
-          fontSize: 16,
-        }}
-      >
-        Clear Sans Medium
-      </Text>
-      <Text
-        style={{
-          fontFamily: "ClearSansBold",
-          fontSize: 16,
-        }}
-      >
-        Clear Sans Bold
-      </Text>
+        <Text
+          style={{
+            fontFamily: "ClearSansMedium",
+            fontSize: 16,
+          }}
+        >
+          Clear Sans Medium
+        </Text>
+        <Text
+          style={{
+            fontFamily: "ClearSansBold",
+            fontSize: 16,
+          }}
+        >
+          Clear Sans Bold
+        </Text>
 
-      <StatusBar style="auto" />
-    </View>
+        <StatusBar style="auto" />
+        <Keyboard present={['A']} correct={['Z']} absent={['F']} />
+      </View>
+    </SafeAreaProvider>
   ) : <View/>;
 }
 

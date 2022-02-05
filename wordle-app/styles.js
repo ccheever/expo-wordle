@@ -1,13 +1,16 @@
 export let colors = {
-  green: "#6aaa64",
+  correct: "#6aaa64",
   darkenedGreen: "#538d4e",
-  yellow: "#c9b458",
+  present: "#c9b458",
   darkenedYellow: "#b59f3b",
   lightGray: "#d8d8d8",
+  grayish: "#d3d6da",
   gray: "#868888a",
+  absent: "#787c7e",
   darkGray: "#939598",
   white: "#fff",
   black: "#212121",
   orange: "#f5793a",
   blue: "#85c0f9",
+  blacker: "#1a1a1b"
 };
