@@ -78,10 +78,10 @@ export const Keyboard = ({
 
     const color = Array.isArray(val)
       ? colors.grayish
-      : present.includes(letter)
-      ? colors.present
       : correct.includes(letter)
       ? colors.correct
+      : present.includes(letter)
+      ? colors.present
       : absent.includes(letter)
       ? colors.absent
       : colors.grayish;

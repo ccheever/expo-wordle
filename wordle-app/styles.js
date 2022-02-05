@@ -7,6 +7,7 @@ export let colors = {
   grayish: "#d3d6da",
   gray: "#868888a",
   absent: "#787c7e",
+  darkishGray: "#878a8c",
   darkGray: "#939598",
   white: "#fff",
   black: "#212121",

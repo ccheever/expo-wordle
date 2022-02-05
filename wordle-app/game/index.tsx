@@ -19,7 +19,7 @@ export default function Game() {
   useEffect(function loadWordOfTheDayData() {
     // todo - load from disk / fetch
     const data: WordOfTheDayData = {
-      wordToGuess: 'LIGHTS',
+      wordToGuess: 'LIGHT',
       guesses: [],
       guessLimit: 6,
     };
@@ -77,11 +77,14 @@ export default function Game() {
       };
     }
 
-    setCurrentMatchData(matchData);
     const updatedWOTDD = {
       ...wordOfTheDayData,
     };
     updatedWOTDD.guesses.push(matchData);
+    setCurrentMatchData({
+      currentGuess: '',
+      match: [],
+    });
     setWordOfTheDayData(updatedWOTDD);
     // todo save to disk
 
@@ -109,15 +112,18 @@ export default function Game() {
         wordOfTheDayData={wordOfTheDayData}
       />
       <Keyboard
-        present={currentMatchData.match
+        present={[...currentMatchData.match
           .filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
-          .map((x) => x.character)}
-        correct={currentMatchData.match
+          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
+          .map((x) => x.character)).flat()].flat()}
+        correct={[...currentMatchData.match
           .filter((x) => x.state === 'CorrectLetterAndPosition')
-          .map((x) => x.character)}
-        absent={currentMatchData.match
+          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'CorrectLetterAndPosition')
+          .map((x) => x.character)).flat()].flat()}
+        absent={[...currentMatchData.match
           .filter((x) => x.state === 'IncorrectLetter')
-          .map((x) => x.character)}
+          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'IncorrectLetter')
+          .map((x) => x.character)).flat()].flat()}
         onLetter={(val: string) => {
           const matchData = { ...currentMatchData };
           matchData.currentGuess += val;
