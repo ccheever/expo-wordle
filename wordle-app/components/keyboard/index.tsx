@@ -1,14 +1,15 @@
-import { View, Text, useWindowDimensions } from "react-native";
+import { View, Text, useWindowDimensions, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../styles";
 import Backspace from "./backspace";
 
-const Key = ({ letter, width = 1, color = colors.grayish }) => {
+const Key = ({ letter, width = 1, color = colors.grayish, onPress }) => {
   const { width: windowWidth } = useWindowDimensions();
   const keyWidth = ((windowWidth - 60) / 10) * width;
 
   return (
-    <View
+    <Pressable
+      onPress={onPress}
       style={{
         ...styles.keyStyle,
         aspectRatio: 0.74 * width,
@@ -21,17 +22,18 @@ const Key = ({ letter, width = 1, color = colors.grayish }) => {
       ) : (
         letter
       )}
-    </View>
+    </Pressable>
   );
 };
 
 // TODO: Have this come in through a GameContext consumer
-export const Keyboard = ({ present = [], correct = [], absent = [] }) => {
+export const Keyboard = ({ present = [], correct = [], absent = [], onEnter, onDelete, onLetter }) => {
   const { bottom } = useSafeAreaInsets();
 
   const renderKey = (val: string | [any, number]) => {
     const letter: any = Array.isArray(val) ? val[0] : val;
     const width = Array.isArray(val) ? val[1] : 1;
+    const handler = Array.isArray(val) ? val[2] : onLetter;
 
     const color = Array.isArray(val)
       ? colors.grayish
@@ -44,6 +46,7 @@ export const Keyboard = ({ present = [], correct = [], absent = [] }) => {
       : colors.grayish;
     return (
       <Key
+        onPress={() => handler(letter)}
         key={letter}
         letter={letter}
         width={width}
@@ -63,7 +66,7 @@ export const Keyboard = ({ present = [], correct = [], absent = [] }) => {
         {["A", "S", "D", "F", "G", "H", "J", "K", "L"].map(renderKey)}
       </View>
       <View style={styles.keyboardRow}>
-        {[["ENTER", 1.52],"Z","X","C","V","B","N","M",[<Backspace />, 1.52],].map(renderKey)}
+        {[["ENTER", 1.52, onEnter],"Z","X","C","V","B","N","M",[<Backspace />, 1.52, onDelete],].map(renderKey)}
       </View>
     </View>
   );

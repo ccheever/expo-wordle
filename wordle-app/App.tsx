@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { colors } from "./styles";
@@ -48,7 +48,7 @@ export default function App() {
         </Text>
 
         <StatusBar style="auto" />
-        <Keyboard present={['A']} correct={['Z']} absent={['F']} />
+        <Keyboard present={['A']} correct={['Z']} absent={['F']} onLetter={(val) => Alert.alert(val)} onDelete={() => Alert.alert('delete')} onEnter={() => Alert.alert('enter')}/>
       </View>
     </SafeAreaProvider>
   ) : <View/>;
