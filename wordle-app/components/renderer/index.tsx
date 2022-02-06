@@ -19,7 +19,7 @@ export default function Renderer({
       {[...Array(wordOfTheDayData?.guessLimit)].map((_, i) => {
         console.log(i);
         return (
-          <Row key={i} index={1} length={wordOfTheDayData?.wordToGuess.length ?? 6} guess={wordOfTheDayData?.guesses[i]} current={wordOfTheDayData?.guesses.length === i} matchData={matchData} />
+          <Row key={i} length={wordOfTheDayData?.wordToGuess.length ?? 6} guess={wordOfTheDayData?.guesses[i]} current={wordOfTheDayData?.guesses.length === i} matchData={matchData} />
         )}
       )}
 

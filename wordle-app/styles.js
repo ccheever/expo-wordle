@@ -15,3 +15,9 @@ export let colors = {
   blue: "#85c0f9",
   blacker: "#1a1a1b"
 };
+
+export const highLightColors = {
+  'CorrectLetterAndPosition': colors.correct,
+  'CorrectLetterAndIncorrectPosition': colors.present,
+  'IncorrectLetter': colors.absent
+}
