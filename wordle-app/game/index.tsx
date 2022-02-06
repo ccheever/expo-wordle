@@ -126,8 +126,10 @@ export default function Game() {
           .map((x) => x.character)).flat()].flat()}
         onLetter={(val: string) => {
           const matchData = { ...currentMatchData };
-          matchData.currentGuess += val;
-          setCurrentMatchData(matchData);
+          if (matchData.currentGuess.length < wordOfTheDayData?.wordToGuess.length) {
+            matchData.currentGuess += val;
+            setCurrentMatchData(matchData);
+          }
         }}
         onDelete={() => {
           const matchData = { ...currentMatchData };

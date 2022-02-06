@@ -10,14 +10,10 @@ export default function Renderer({
   matchData: MatchData;
   wordOfTheDayData: WordOfTheDayData | null;
 }) {
-
-  console.log(wordOfTheDayData?.guessLimit)
-
   return (
     <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
 
       {[...Array(wordOfTheDayData?.guessLimit)].map((_, i) => {
-        console.log(i);
         return (
           <Row key={i} length={wordOfTheDayData?.wordToGuess.length ?? 6} guess={wordOfTheDayData?.guesses[i]} current={wordOfTheDayData?.guesses.length === i} matchData={matchData} />
         )}
