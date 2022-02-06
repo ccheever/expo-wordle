@@ -1,10 +1,9 @@
 import { withDelay, withSequence, withTiming } from "react-native-reanimated";
-import { colors, highLightColors } from "../../styles";
 
-export const enteringZoom = () => {
+export const enteringZoom = (borderColor) => () => {
   'worklet';
   const animations = {
-    borderColor: colors.darkishGray,
+    borderColor: borderColor,
     transform: [
       { scale: withSequence(withTiming(1.1, { duration: 100 }), withTiming(1, { duration: 100})) },
     ],
@@ -18,17 +17,18 @@ export const enteringZoom = () => {
   };
 };
 
-export const releavingFlip = (index: number, guess: MatchData) => () => {
+export const releavingFlip = (index: number, guess: MatchData, highLightColors: {}, borderColor) => () => {
   'worklet';
   
   const initialValues = {
     transform: [{ rotateX: '0deg' }],
+    borderColor: borderColor,
   }
   const animations = {
-    borderColor: colors.grayish,
-    backgroundColor: withDelay(index*400, withTiming(highLightColors[guess.match[index].state])),
+    borderColor: withDelay(index*700, withTiming(highLightColors[guess.match[index].state], { duration: 0 })),
+    backgroundColor: withDelay(index*700, withTiming(highLightColors[guess.match[index].state], { duration: 0 })),
     transform: [
-      { rotateX: withSequence(withDelay(index*400, withTiming('90deg')), withTiming('0deg')) },
+      { rotateX: withSequence(withDelay(index*600, withTiming('90deg')), withTiming('0deg')) },
     ],
   }
   return {

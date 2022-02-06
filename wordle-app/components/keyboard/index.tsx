@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
   View,
   Text,
@@ -6,20 +7,22 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '../../styles';
+import { ThemeContext } from '../../theme/ThemeProvider';
 import Backspace from './backspace';
 
 type KeyProps = {
-  letter: string;
+  Letter: string | object;
   width: number;
   color: string;
+  textColor: string;
   onPress: () => void;
 };
 
 const Key = ({
-  letter,
+  Letter,
   width = 1,
-  color = colors.grayish,
+  color,
+  textColor,
   onPress,
 }: KeyProps) => {
   const { width: windowWidth } = useWindowDimensions();
@@ -35,17 +38,17 @@ const Key = ({
         backgroundColor: color,
       }}
     >
-      {typeof letter === 'string' ? (
+      {typeof Letter === 'string' ? (
         <Text
           style={{
             fontFamily: 'ClearSansBold',
-            color: color !== colors.grayish ? colors.white : colors.blacker,
+            color: textColor,
           }}
         >
-          {letter}
+          {Letter}
         </Text>
       ) : (
-        letter
+        <Backspace color={textColor} />
       )}
     </Pressable>
   );
@@ -71,27 +74,30 @@ export const Keyboard = ({
 }: KeyboardProps) => {
   const { bottom } = useSafeAreaInsets();
 
+  const theme = useContext(ThemeContext);
+
   const renderKey = (val: string | (any | number | (() => void))[]) => {
     const letter: any = Array.isArray(val) ? val[0] : val;
     const width = Array.isArray(val) ? val[1] : 1;
     const handler = Array.isArray(val) ? val[2] : onLetter;
 
     const color = Array.isArray(val)
-      ? colors.grayish
+      ? theme.colors['key-bg']
       : correct.includes(letter)
-      ? colors.correct
+      ? theme.colors['key-bg-correct']
       : present.includes(letter)
-      ? colors.present
+      ? theme.colors['key-bg-present']
       : absent.includes(letter)
-      ? colors.absent
-      : colors.grayish;
+      ? theme.colors['key-bg-absent']
+      : theme.colors['key-bg'];
     return (
       <Key
         onPress={() => handler(letter)}
-        key={letter}
-        letter={letter}
+        key={letter}  
+        Letter={letter}
         width={width}
         color={color}
+        textColor={color === theme.colors['key-bg'] ? theme.colors['key-text-color'] : theme.colors['key-evaluated-text-color']}
       />
     );
   };

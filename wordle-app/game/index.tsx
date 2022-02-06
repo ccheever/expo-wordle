@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { Appearance, View } from 'react-native';
 import { Keyboard } from '../components/keyboard';
 import Renderer from '../components/renderer';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { WordOfTheDayData } from './WordOfTheDayData';
 
 const defaultGuessLimit = 6;
@@ -15,6 +16,10 @@ export default function Game() {
   });
   const guessesLeft =
     defaultGuessLimit - (wordOfTheDayData?.guesses?.length ?? 0);
+
+  const theme = useContext(ThemeContext);
+
+  Appearance.addChangeListener(({ colorScheme }) => { colorScheme && theme.setTheme(colorScheme);});
 
   useEffect(function loadWordOfTheDayData() {
     // todo - load from disk / fetch
@@ -106,7 +111,7 @@ export default function Game() {
   }
 
   return (
-    <View style={{ flex: 1, alignContent: 'flex-end', marginBottom: 24 }}>
+    <View style={{ flex: 1, alignContent: 'flex-end', backgroundColor: theme.colors['modal-content-bg'], alignItems: 'center', justifyContent: 'center' }}>
       <Renderer
         matchData={currentMatchData}
         wordOfTheDayData={wordOfTheDayData}

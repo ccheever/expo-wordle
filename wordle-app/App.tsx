@@ -3,6 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useFonts } from 'expo-font';
 import Game from './game';
+import ThemeProvider from './theme/ThemeProvider';
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -17,40 +18,40 @@ export default function App() {
   });
 
   return fontsLoaded ? (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        {/* 
-        <Text
-          style={{
-            fontFamily: "ClearSansRegular",
-            fontSize: 16,
-          }}
-        >
-          Clear Sans Regular
-        </Text>
+    <ThemeProvider>
+      <SafeAreaProvider>
+          {/* 
+          <Text
+            style={{
+              fontFamily: "ClearSansRegular",
+              fontSize: 16,
+            }}
+          >
+            Clear Sans Regular
+          </Text>
 
-        <Text
-          style={{
-            fontFamily: "ClearSansMedium",
-            fontSize: 16,
-          }}
-        >
-          Clear Sans Medium
-        </Text>
-        <Text
-          style={{
-            fontFamily: "ClearSansBold",
-            fontSize: 16,
-          }}
-        >
-          Clear Sans Bold
-        </Text>
+          <Text
+            style={{
+              fontFamily: "ClearSansMedium",
+              fontSize: 16,
+            }}
+          >
+            Clear Sans Medium
+          </Text>
+          <Text
+            style={{
+              fontFamily: "ClearSansBold",
+              fontSize: 16,
+            }}
+          >
+            Clear Sans Bold
+          </Text>
 
-         */}
-        <StatusBar barStyle={'dark-content'}/>
-        <Game />
-      </View>
-    </SafeAreaProvider>
+          */}
+          <StatusBar barStyle={'dark-content'}/>
+          <Game />      
+      </SafeAreaProvider>
+    </ThemeProvider>
   ) : (
     <View />
   );
@@ -59,7 +60,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
