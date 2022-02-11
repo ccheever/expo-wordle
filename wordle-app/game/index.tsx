@@ -58,8 +58,7 @@ export default function Game() {
       setCurrentMatchData(matchData);
       return;
     }
-    // todo - check dictionary
-    if (!acceptableWordList.includes(wordToGuess)){
+    if (!acceptableWordList.includes(currentGuess)) {
       matchData.error = 'Invalid word choice';
       setCurrentMatchData(matchData);
       return;
