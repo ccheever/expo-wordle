@@ -4,6 +4,7 @@ import { Keyboard } from '../components/keyboard';
 import Renderer from '../components/renderer';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { WordOfTheDayData } from './WordOfTheDayData';
+import acceptableWordList from './acceptable-words-in-wordle.json'
 
 const defaultGuessLimit = 6;
 
@@ -29,7 +30,6 @@ export default function Game() {
       guessLimit: 6,
     };
     setWordOfTheDayData(data);
-    // todo - save to disk
   }, []);
 
   function submitGuess() {
@@ -59,6 +59,11 @@ export default function Game() {
       return;
     }
     // todo - check dictionary
+    if (!acceptableWordList.includes(wordToGuess)){
+      matchData.error = 'Invalid word choice';
+      setCurrentMatchData(matchData);
+      return;
+    }
 
     matchData.error = undefined;
     for (let i = 0; i < currentGuess.length; i++) {
@@ -131,7 +136,7 @@ export default function Game() {
           .map((x) => x.character)).flat()].flat()}
         onLetter={(val: string) => {
           const matchData = { ...currentMatchData };
-          if (matchData.currentGuess.length < wordOfTheDayData?.wordToGuess.length) {
+          if (matchData.currentGuess.length < (wordOfTheDayData?.wordToGuess.length ?? 0)) {
             matchData.currentGuess += val;
             setCurrentMatchData(matchData);
           }
