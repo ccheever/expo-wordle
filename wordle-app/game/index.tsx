@@ -5,8 +5,8 @@ import Renderer from '../components/renderer';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { WordOfTheDayData } from './WordOfTheDayData';
 import acceptableWordList from './acceptable-words-in-wordle.json'
-
-const defaultGuessLimit = 6;
+import dailyWords from './daily-words.json';
+import { defaultGuessLimit } from './constants';
 
 export default function Game() {
   const [wordOfTheDayData, setWordOfTheDayData] =
@@ -23,13 +23,20 @@ export default function Game() {
   Appearance.addChangeListener(({ colorScheme }) => { colorScheme && theme.setTheme(colorScheme);});
 
   useEffect(function loadWordOfTheDayData() {
-    // todo - load from disk / fetch
-    const data: WordOfTheDayData = {
-      wordToGuess: 'LIGHT',
-      guesses: [],
-      guessLimit: 6,
-    };
-    setWordOfTheDayData(data);
+    const date = new Date();    
+    const key = `${date.getMonth()+1}-${date.getDate()}-${date.getFullYear()}`
+    const loadedWordOfTheDayData = (dailyWords as Record<string, WordOfTheDayData>)[key];
+    if (loadedWordOfTheDayData) {
+      // console.log(loadedWordOfTheDayData);
+      setWordOfTheDayData(loadedWordOfTheDayData);
+    } else {
+      const data: WordOfTheDayData = {
+        wordToGuess: 'LIGHT',
+        guesses: [],
+        guessLimit: 6,
+      };
+      setWordOfTheDayData(data);
+    }
   }, []);
 
   function submitGuess() {
