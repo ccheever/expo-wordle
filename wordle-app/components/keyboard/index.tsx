@@ -31,12 +31,11 @@ const Key = ({
   return (
     <Pressable
       onPress={onPress}
-      style={{
-        ...styles.keyStyle,
+      style={[styles.keyStyle, {
         aspectRatio: 0.74 * width,
         width: keyWidth,
         backgroundColor: color,
-      }}
+      }]}
     >
       {typeof Letter === 'string' ? (
         <Text
