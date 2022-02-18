@@ -1,12 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appearance, View } from 'react-native';
 import { Keyboard } from '../components/keyboard';
 import Renderer from '../components/renderer';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { WordOfTheDayData } from './WordOfTheDayData';
-import acceptableWordList from './acceptable-words-in-wordle.json'
+import acceptableWordList from './acceptable-words-in-wordle.json';
 import dailyWords from './daily-words.json';
 import { defaultGuessLimit } from './constants';
+
+// todo - put this an onMount into a page focused navigation listener
+const date = new Date();
+const key = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
 
 export default function Game() {
   const [wordOfTheDayData, setWordOfTheDayData] =
@@ -17,29 +22,54 @@ export default function Game() {
   });
   const guessesLeft =
     defaultGuessLimit - (wordOfTheDayData?.guesses?.length ?? 0);
+  const hasGuessedOrOutOfGuesses =
+    !(wordOfTheDayData?.hasCorrectlyGuessed ?? false) && guessesLeft > 0;
+  const isKeypresssInteractble =
+    hasGuessedOrOutOfGuesses &&
+    currentMatchData?.currentGuess.length <
+      (wordOfTheDayData?.wordToGuess.length ?? 0);
+  const isEnterInteractable = hasGuessedOrOutOfGuesses;
+  const isDeleteInteractable =
+    hasGuessedOrOutOfGuesses && currentMatchData?.currentGuess.length > 0;
 
   const theme = useContext(ThemeContext);
 
-  Appearance.addChangeListener(({ colorScheme }) => { colorScheme && theme.setTheme(colorScheme);});
+  Appearance.addChangeListener(({ colorScheme }) => {
+    colorScheme && theme.setTheme(colorScheme);
+  });
 
   useEffect(function loadWordOfTheDayData() {
-    const date = new Date();    
-    const key = `${date.getMonth()+1}-${date.getDate()}-${date.getFullYear()}`
-    const loadedWordOfTheDayData = (dailyWords as Record<string, WordOfTheDayData>)[key];
-    if (loadedWordOfTheDayData) {
-      // console.log(loadedWordOfTheDayData);
-      setWordOfTheDayData(loadedWordOfTheDayData);
-    } else {
-      const data: WordOfTheDayData = {
-        wordToGuess: 'LIGHT',
-        guesses: [],
-        guessLimit: 6,
-      };
-      setWordOfTheDayData(data);
+    async function run() {
+      // for dev
+      // await AsyncStorage.clear();
+      const storedData = await AsyncStorage.getItem(key);
+      if (storedData) {
+        // fetch user's previously modified data
+        const _wordOfTheDayData: WordOfTheDayData = JSON.parse(storedData);
+        setWordOfTheDayData(_wordOfTheDayData);
+      } else {
+        // fetch daily static starting data
+        const loadedWordOfTheDayData = (
+          dailyWords as Record<string, WordOfTheDayData>
+        )[key];
+        if (loadedWordOfTheDayData) {
+          setWordOfTheDayData(loadedWordOfTheDayData);
+        } else {
+          // falback case
+          const data: WordOfTheDayData = {
+            wordToGuess: 'LIGHT',
+            guesses: [],
+            guessLimit: 6,
+            hasCorrectlyGuessed: false,
+          };
+          setWordOfTheDayData(data);
+        }
+      }
     }
+    run();
   }, []);
 
-  function submitGuess() {
+  async function submitGuess() {
     console.log('submitted with ' + guessesLeft + ' guesses left');
 
     const matchData = { ...currentMatchData };
@@ -92,23 +122,19 @@ export default function Game() {
         state: 'IncorrectLetter',
       };
     }
+    const hasCorrectlyGuessed = currentMatchData.match.every(
+      (character) => character.state === 'CorrectLetterAndPosition'
+    );
 
     const updatedWOTDD = {
       ...wordOfTheDayData,
+      hasCorrectlyGuessed,
     };
     updatedWOTDD.guesses.push(matchData);
-    setCurrentMatchData({
-      currentGuess: '',
-      match: [],
-    });
     setWordOfTheDayData(updatedWOTDD);
-    // todo save to disk
+    await AsyncStorage.setItem(key, JSON.stringify(updatedWOTDD));
 
-    if (
-      currentMatchData.match.every(
-        (character) => character.state === 'CorrectLetterAndPosition'
-      )
-    ) {
+    if (hasCorrectlyGuessed) {
       console.log('You win');
     } else if (
       currentMatchData.match.some(
@@ -119,35 +145,73 @@ export default function Game() {
     } else {
       console.log('You guessed no letters correctly');
     }
+    setCurrentMatchData({
+      currentGuess: '',
+      match: [],
+    });
   }
 
   return (
-    <View style={{ flex: 1, alignContent: 'flex-end', backgroundColor: theme.colors['modal-content-bg'], alignItems: 'center', justifyContent: 'center' }}>
+    <View
+      style={{
+        flex: 1,
+        alignContent: 'flex-end',
+        backgroundColor: theme.colors['modal-content-bg'],
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Renderer
         matchData={currentMatchData}
         wordOfTheDayData={wordOfTheDayData}
       />
       <Keyboard
-        present={[...currentMatchData.match
-          .filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
-          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
-          .map((x) => x.character)).flat()].flat()}
-        correct={[...currentMatchData.match
-          .filter((x) => x.state === 'CorrectLetterAndPosition')
-          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'CorrectLetterAndPosition')
-          .map((x) => x.character)).flat()].flat()}
-        absent={[...currentMatchData.match
-          .filter((x) => x.state === 'IncorrectLetter')
-          .map((x) => x.character), ...(wordOfTheDayData?.guesses || []).map(g => g.match.filter((x) => x.state === 'IncorrectLetter')
-          .map((x) => x.character)).flat()].flat()}
+        present={[
+          ...currentMatchData.match
+            .filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
+            .map((x) => x.character),
+          ...(wordOfTheDayData?.guesses || [])
+            .map((g) =>
+              g.match
+                .filter((x) => x.state === 'CorrectLetterAndIncorrectPosition')
+                .map((x) => x.character)
+            )
+            .flat(),
+        ].flat()}
+        correct={[
+          ...currentMatchData.match
+            .filter((x) => x.state === 'CorrectLetterAndPosition')
+            .map((x) => x.character),
+          ...(wordOfTheDayData?.guesses || [])
+            .map((g) =>
+              g.match
+                .filter((x) => x.state === 'CorrectLetterAndPosition')
+                .map((x) => x.character)
+            )
+            .flat(),
+        ].flat()}
+        absent={[
+          ...currentMatchData.match
+            .filter((x) => x.state === 'IncorrectLetter')
+            .map((x) => x.character),
+          ...(wordOfTheDayData?.guesses || [])
+            .map((g) =>
+              g.match
+                .filter((x) => x.state === 'IncorrectLetter')
+                .map((x) => x.character)
+            )
+            .flat(),
+        ].flat()}
         onLetter={(val: string) => {
+          if (!isKeypresssInteractble) return;
+
           const matchData = { ...currentMatchData };
-          if (matchData.currentGuess.length < (wordOfTheDayData?.wordToGuess.length ?? 0)) {
-            matchData.currentGuess += val;
-            setCurrentMatchData(matchData);
-          }
+          matchData.currentGuess += val;
+          setCurrentMatchData(matchData);
         }}
         onDelete={() => {
+          if (!isDeleteInteractable) return;
+
           const matchData = { ...currentMatchData };
           matchData.currentGuess =
             matchData.currentGuess?.slice(
@@ -156,7 +220,11 @@ export default function Game() {
             ) ?? '';
           setCurrentMatchData(matchData);
         }}
-        onEnter={() => submitGuess()}
+        onEnter={async () => {
+          if (!isEnterInteractable) return;
+
+          await submitGuess();
+        }}
       />
     </View>
   );

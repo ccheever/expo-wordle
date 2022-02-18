@@ -2,36 +2,43 @@
   "2-11-2022": {
     "wordToGuess": "LIGHT",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-12-2022": {
     "wordToGuess": "KNAVE",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-13-2022": {
     "wordToGuess": "RISKS",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-14-2022": {
     "wordToGuess": "STUCK",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-15-2022": {
     "wordToGuess": "VOTER",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-16-2022": {
     "wordToGuess": "WEDGE",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   },
   "2-17-2022": {
     "wordToGuess": "INKER",
     "guesses": [],
-    "guessLimit": 6
+    "guessLimit": 6,
+    "hasCorrectlyGuessed": false
   }
 }
