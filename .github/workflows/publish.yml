@@ -38,7 +38,7 @@ jobs:
 
       - name: 🚀 Publish production
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        run: expo publish --release-channel=production
+        run: expo publish --release-channel=main
 
       - name: 🚀 Publish preview
         if: ${{ github.event_name == 'pull_request' }}
