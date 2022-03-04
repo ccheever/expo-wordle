@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize]
 
 concurrency:
-  group: preview-${{ github.ref }}
+  group: publish-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
