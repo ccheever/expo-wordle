@@ -41,7 +41,12 @@ export default function Game() {
   useEffect(function loadWordOfTheDayData() {
     async function run() {
       // for dev
-      // await AsyncStorage.clear();
+      // try {
+      //   await AsyncStorage.clear();
+      // } catch (error) {
+      //   console.log(error);
+      // }
+
       const storedData = await AsyncStorage.getItem(key);
       if (storedData) {
         // fetch user's previously modified data
@@ -57,7 +62,7 @@ export default function Game() {
         } else {
           // falback case
           const data: WordOfTheDayData = {
-            wordToGuess: 'LIGHT',
+            wordToGuess: 'AHEAD',
             guesses: [],
             guessLimit: 6,
             hasCorrectlyGuessed: false,
@@ -84,7 +89,7 @@ export default function Game() {
       setCurrentMatchData(matchData);
       return;
     }
-    const wordToGuess = wordOfTheDayData.wordToGuess.toUpperCase();
+    const wordToGuess = wordOfTheDayData.wordToGuess;
     if (!currentGuess) {
       matchData.error = 'No guess was entered';
       setCurrentMatchData(matchData);
@@ -102,19 +107,26 @@ export default function Game() {
     }
 
     matchData.error = undefined;
+    let matchesLeft = wordToGuess;
     for (let i = 0; i < currentGuess.length; i++) {
       if (currentGuess[i] === wordToGuess[i]) {
         matchData.match[i] = {
           character: currentGuess[i],
           state: 'CorrectLetterAndPosition',
         };
+        matchesLeft = matchesLeft.replace(currentGuess[i], '');
         continue;
       }
-      if (wordToGuess.includes(currentGuess[i])) {
+    }
+
+    for (let i = 0; i < currentGuess.length; i++) {
+      if (matchData.match[i]) continue;
+      if (matchesLeft.includes(currentGuess[i])) {
         matchData.match[i] = {
           character: currentGuess[i],
           state: 'CorrectLetterAndIncorrectPosition',
         };
+        matchesLeft = matchesLeft.replace(currentGuess[i], '');
         continue;
       }
       matchData.match[i] = {
@@ -122,6 +134,7 @@ export default function Game() {
         state: 'IncorrectLetter',
       };
     }
+
     const hasCorrectlyGuessed = currentMatchData.match.every(
       (character) => character.state === 'CorrectLetterAndPosition'
     );
